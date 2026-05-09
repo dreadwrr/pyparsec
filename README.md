@@ -1,7 +1,5 @@
-# pyparsec
-python wheel source for mft parser
-
-source for python package compiled with cl /O2 /MT /LD parser.c parserlib.c /Fe:parserlib.dll
-
-
-installation instruction to follow
+# mftparser
+A ctypes wrapper for parsing the MFT on Windows 11 / Windows 12.
+Returns a list of tuples for all entries on the volume.
+Useful for quickly searching for files, deleted files, etc.
+Requires administrator privileges.

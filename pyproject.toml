@@ -8,7 +8,7 @@ version = "0.1.2"
 authors = [
   { name="Colby Saigeon", email="cole.saigeon@gmail.com" },
 ]
-description = "package for parsing mft using ctypes. a python wheel"
+description = "package for parsing mft. a python wheel"
 readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [
@@ -22,10 +22,15 @@ license-files = ["LICEN[CS]E*"]
 Homepage = "https://github.com/dreadwrr/pyparsec"
 Issues = "https://github.com/dreadwrr/pyparsec/issues"
 
-[tool.setuptools]
-package-dir = {"" = "mftparser"}
+[tool.bdist_wheel]
+python-tag = "cp39"
+plat-name = "win_amd64"
 
-[tool.setuptools.packages.find]
-where = ["mftparser"]
+[tool.setuptools]
+package-dir = {"" = "."}
 
 [tool.setuptools.package-data]
+mftparser = ["*.pyd"]
+
+[tool.setuptools.packages.find]
+where = ["."]
