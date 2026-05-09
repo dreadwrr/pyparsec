@@ -12,7 +12,7 @@ pip install mftparser
 ## Parameters
 - `drive` — drive letter in format `"C:"` (default `"C:"`)
 - `only_active` — if `False`,  return all entries (default `True`)
-- `microseconds` — if `True`, return timestamps as epoch microseconds (default `False`, returns NTFS ticks)
+- `microseconds` — if `True`, return timestamps in epoch microseconds (default `False`, NTFS ticks)
 
 ## Usage
 ```python
