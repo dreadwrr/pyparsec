@@ -3,7 +3,7 @@
 # mftparser
 A Python extension for parsing the MFT on Windows 10 / Windows 11. <br>
 Returns a list of tuples for all entries on the volume. <br>
-Requires administrator privileges. <br>
+Requires administrator privileges <br>
 
 ## Install
 pip install mftparser
