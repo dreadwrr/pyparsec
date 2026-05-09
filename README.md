@@ -1,4 +1,4 @@
-![Alt text](https://raw.githubusercontent.com/dreadwrr/pyparsec/main/VD0ZvNd.png))
+![Alt text](https://raw.githubusercontent.com/dreadwrr/pyparsec/main/VD0ZvNd.png)
 
 # mftparser
 A Python extension for parsing the MFT on Windows 10 / Windows 11. <br>
