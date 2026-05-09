@@ -1,5 +1,8 @@
 from .mftparser import (
-    output_parserlib,
+    ScanVolume
+)
+
+from .units import (
     ntfs_to_us,
     ntfs_to_ns,
     frn_to_entry,
@@ -7,7 +10,7 @@ from .mftparser import (
 )
 
 __all__ = [
-    "output_parserlib",
+    "ScanVolume",
     "ntfs_to_us",
     "ntfs_to_ns",
     "frn_to_entry",
