@@ -150,7 +150,7 @@ void AppendLink(uint32_t recno, uint64_t frn, uint64_t parent_frn, const char *n
     links[link_count].frn = frn;
     links[link_count].parent_frn = parent_frn;
     links[link_count].name = _strdup(name);
-    links[link_count].name_len = strlen(name);
+    links[link_count].name_len = (uint16_t)strlen(name);
     if (!links[link_count].name) {
         fprintf(stderr, "strdup failed\n");
         exit(1);
@@ -165,7 +165,7 @@ void AppendExtension(uint32_t recno, uint32_t base_recno, uint64_t frn, uint64_t
     ext[ext_count].frn = frn;
     ext[ext_count].parent_frn = parent_frn;
     ext[ext_count].name = _strdup(name);
-    ext[ext_count].name_len = strlen(name);
+    ext[ext_count].name_len = (uint16_t)strlen(name);
     if (!ext[ext_count].name) {
         fprintf(stderr, "strdup failed\n");
         exit(1);
@@ -798,7 +798,7 @@ int BuildDirPath(uint32_t recno, char *out, size_t outSize) {
     if (pos == 0) {
         if (outSize < 2)
             return 0;
-        strcpy(out, "\\");
+        memcpy(out, "\\", 2);
     }
 
     char *tmp = _strdup(out);
@@ -824,7 +824,7 @@ int BuildDirPath(uint32_t recno, char *out, size_t outSize) {
 int BuildPath(uint32_t recno, const char *name, uint16_t name_len, char *out, size_t outSize) {
     char dir[MAX_PTH];
 
-    size_t pos, len;
+    size_t pos;
 
     if (!out || outSize == 0)
         return 0;
@@ -865,7 +865,7 @@ int BuildPath(uint32_t recno, const char *name, uint16_t name_len, char *out, si
     if (pos == 0) {
         if (outSize < 2)
             return 0;
-        strcpy(out, "\\");
+        memcpy(out, "\\", 2);
         pos = 1;
     }
 
@@ -977,7 +977,7 @@ void Help(char* argv[]) {
 }
 
 /**
-04/30/2026
+05/09/2026
 
 usage:
 
@@ -1028,7 +1028,7 @@ int main(int argc, char *argv[]) {
     int ret = 1;  // assume error
     int arg_index = 1;
 
-    int str_len = 0;
+    size_t str_len = 0;
 
     const char *input = NULL;
     
@@ -1184,7 +1184,7 @@ int main(int argc, char *argv[]) {
 
     HANDLE h;
     unsigned char *buf = NULL;
-    LARGE_INTEGER pos;
+
     DWORD bytes_read = 0;
 
     FILE_RECORD_HEADER *hrec;
@@ -1320,7 +1320,7 @@ int main(int argc, char *argv[]) {
 
 
         // check extension records for over flows ie name missing <--
-        for (int i = 0; i < ext_count; i++) {
+        for (uint32_t i = 0; i < ext_count; i++) {
             uint32_t b = ext[i].base_recno;
 
             if (entries[b].in_use && (entries[b].name == NULL || entries[b].name[0] == '\0') && entries[b].frn == ext[i].frn) {
@@ -1332,6 +1332,8 @@ int main(int argc, char *argv[]) {
         }
 
         uint32_t attrs = 0;
+        uint64_t parent_recno = 0;
+        uint16_t parent_seq = 0;
 
         /* print mft entries for run */
 
@@ -1340,8 +1342,7 @@ int main(int argc, char *argv[]) {
                 printf("recno,sequence,parent_recno,parent_sequence,in_use,size,hard_link_count,modification_time,creation_time,mft_modified,access_time,file_attribs,type,has_ads,name,path\n");
 
                 uint32_t failed = 0;
-                uint32_t parent_recno = 0;
-                uint16_t parent_seq = 0;
+
                 /* regular output format */
                 for (uint32_t recno = 0; recno < max_count + 1; recno++) {
 
@@ -1352,13 +1353,13 @@ int main(int argc, char *argv[]) {
 
                     if (BuildPath(recno, entries[recno].name, entries[recno].name_len, path, sizeof(path))) {
 
-                        parent_recno = (uint32_t)(entries[recno].parent_frn & FRN_RECORD_MASK);
+                        parent_recno = (entries[recno].parent_frn & FRN_RECORD_MASK);
                         parent_seq = (uint16_t)(entries[recno].parent_frn >> 48);
 
-                        printf("%lu,%hu,%lu,%hu,%d,%llu,%hu,%llu,%llu,%llu,%llu,%lu,%s,%d,\"%s\",\"%s\"\n",
+                        printf("%lu,%hu,%llu,%hu,%d,%llu,%hu,%llu,%llu,%llu,%llu,%lu,%s,%d,\"%s\",\"%s\"\n",
                             (unsigned long)recno,
                             entries[recno].sequence_num,
-                            (unsigned long)parent_recno,
+                            (unsigned long long)parent_recno,
                             parent_seq,
                             (int) entries[recno].in_use,
                             (unsigned long long)entries[recno].size,
@@ -1422,8 +1423,8 @@ int main(int argc, char *argv[]) {
 
                     if (BuildPath(recno, entries[recno].name, entries[recno].name_len, path, sizeof(path))) {
 
-                        uint32_t parent_recno = (uint32_t)(entries[recno].parent_frn & FRN_RECORD_MASK);
-                        uint16_t parent_seq = (uint16_t)(entries[recno].parent_frn >> 48);
+                        parent_recno = (entries[recno].parent_frn & FRN_RECORD_MASK);
+                        parent_seq = (uint16_t)(entries[recno].parent_frn >> 48);
 
                         FormatFileTime(entries[recno].modification_time, mt, sizeof(mt));
                         FormatFileTime(entries[recno].creation_time, ct, sizeof(ct));
@@ -1435,10 +1436,10 @@ int main(int argc, char *argv[]) {
                         // printf("attrs=0x%08X\n", attrs);
                         // printf("%lu", (unsigned long)entries[recno].file_attribs);
                         // ro, hid, sys, arc, rep, spa, rec,
-                        printf("%lu,%hu,%lu,%hu,%d,%llu,%hu,%s,%s,%s,%s,0x%08X,%s,%d,\"%s\",\"%s\"\n",
+                        printf("%lu,%hu,%llu,%hu,%d,%llu,%hu,%s,%s,%s,%s,0x%08X,%s,%d,\"%s\",\"%s\"\n",
                             (unsigned long)recno,
                             entries[recno].sequence_num,
-                            (unsigned long)parent_recno,
+                            (unsigned long long)parent_recno,
                             parent_seq,
                             (int) entries[recno].in_use,
                             (unsigned long long)entries[recno].size,
@@ -1525,7 +1526,7 @@ int main(int argc, char *argv[]) {
     
             int is_frn = 0;
             uint16_t seq_no = 0;
-            uint32_t recno = 0;
+            uint64_t recno = 0;
 
             // frn
             if (target_recno >= max_count) {

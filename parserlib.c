@@ -5,7 +5,7 @@
 
 static PyObject *ScanVolume(PyObject * self, PyObject * args, PyObject *kwargs) {
 
-    static char *kwlist[] = {"drive", "in_use", "microseconds", NULL};
+    static char *kwlist[] = {"drive", "only_active", "microseconds", NULL};
     char volume[16];  // set target drive ie C: S: E:
     
     const char *drive = NULL;
@@ -13,7 +13,6 @@ static PyObject *ScanVolume(PyObject * self, PyObject * args, PyObject *kwargs) 
     int epoch_us_arg = 0;
     int in_use_arg = 0;
 
-    bool deleted = true;  // default show all records
     bool epoch_us = false;  // default is ntfs ticks
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|spp", kwlist, &drive, &in_use_arg, &epoch_us_arg)) {
@@ -37,10 +36,9 @@ static PyObject *ScanVolume(PyObject * self, PyObject * args, PyObject *kwargs) 
         drive = drive_buf;
     }
     
-    if (in_use_arg)
-        deleted = false;  // purpose to save time later during python iterating
+    bool deleted = !in_use_arg;  // default show in use records. purpose save time later during python iterating
     if (epoch_us_arg)
-        epoch_us = true;  // microseconds instead of ntfs ticks for python date time
+        epoch_us = true;  // microseconds instead of ntfs ticks
 
     snprintf(volume, sizeof(volume), "\\\\.\\%s", drive);
     HANDLE h;
@@ -180,6 +178,10 @@ static PyObject *ScanVolume(PyObject * self, PyObject * args, PyObject *kwargs) 
         for (uint32_t i = 0; i < max_count + 1; i++) {
 
             FileEntry *e = &entries[i];
+            if (!e->in_use)
+                continue;
+            if (!e->name)
+                continue;
 
             PyObject *tuple = PyTuple_New(16);
             if (!tuple) {
@@ -187,10 +189,6 @@ static PyObject *ScanVolume(PyObject * self, PyObject * args, PyObject *kwargs) 
                 PyErr_SetString(PyExc_RuntimeError, "failed to convert results");
                 return NULL;
             }
-            if (!e->in_use)
-                continue;
-            if (!e->name)
-                continue;
 
             BuildPath(i, entries[i].name, entries[i].name_len, path, sizeof(path));
 
@@ -344,7 +342,8 @@ static PyObject *ScanVolume(PyObject * self, PyObject * args, PyObject *kwargs) 
         if (h != INVALID_HANDLE_VALUE) {
             CloseHandle(h);
         }
-        PyErr_Format((PyExc_RuntimeError, "failed to scan volume %s", drive);
+
+        PyErr_Format(PyExc_RuntimeError, "failed to scan volume %s", drive);
         return NULL;
 }
 
