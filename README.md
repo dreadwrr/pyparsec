@@ -20,14 +20,14 @@ for entry in results:
 
 ## Utilities
 
-# convert NTFS ticks to epoch microseconds
+# NTFS ticks to epoch microseconds
 mftparser.ntfs_to_us(ts)
 
-# convert NTFS ticks to epoch nanoseconds
+# NTFS ticks to epoch nanoseconds
 mftparser.ntfs_to_ns(ts)
 
-# convert a file reference number to record number and sequence
+# file reference number to record number and sequence
 recno, seq = mftparser.frn_to_entry(frn)
 
-# convert record number and sequence to a file reference number
+# record number and sequence to file reference number
 frn = mftparser.entry_to_frn(recno, seq)
