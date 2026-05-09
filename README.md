@@ -3,10 +3,16 @@
 # mftparser
 A Python extension for parsing the MFT on Windows 10 / Windows 11. <br>
 Returns a list of tuples for all entries on the volume. <br>
+if listing all entries check that entry is not None as list is then sparse <br>
 Requires administrator privileges <br>
 
 ## Install
 pip install mftparser
+
+## Parameters
+- `drive` — drive letter e.g. `"C:"` (default `"C:"`)
+- `only_active` — if `False`, for forensic level return all entries (default `True`)
+- `microseconds` — if `True`, return timestamps as epoch microseconds (default `False`, returns NTFS ticks)
 
 ## Usage
 ```python
@@ -14,8 +20,6 @@ import mftparser
 
 results = mftparser.ScanVolume("C:")
 for entry in results:
-    if entry is None:
-        continue
     record_number, seq, in_use, parent_recno, parent_seq, path, name, size, hard_links, is_dir, has_ads, attribs, mod_time, create_time, mft_mod, access_time = entry
     print(path, name)
 ```
