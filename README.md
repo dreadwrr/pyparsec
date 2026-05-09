@@ -1,3 +1,6 @@
+Note originally made using ctypes and .dll library. I have instead used python c api so have to test before releasing which <br>
+shouldnt be very long. <br><br>
+
 # mftparser
 A Python extension for parsing the MFT on Windows 10 / Windows 11. <br>
 Returns a list of tuples for all active records <br>
