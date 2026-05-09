@@ -1,6 +1,6 @@
 05/09/20206 <br><br>
 
-Note originally made using ctypes and .dll library. I have since moved over to python c api so have to finish testing before releasing which <br>
+Note originally made using ctypes and .dll library. I have since moved over to python c api so have to finish testing before releasing which
 shouldnt be very long. <br><br>
 
 Will list compile steps for the .pyd <br><br>
