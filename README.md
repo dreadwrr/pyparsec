@@ -25,7 +25,7 @@ for entry in results:
 ```
 
 ## Functions
-mftparser.ScanVolume("C:", only_active=True, microseconds=False) <br>
+mftparser.ScanVolume("C:", only_active=True, microseconds=False) <br><br>
 note if only_active is False check that entry is not None as it is sparse
 
 # NTFS ticks to epoch microseconds
