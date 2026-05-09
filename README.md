@@ -10,7 +10,7 @@ Requires administrator privileges <br>
 pip install mftparser
 
 ## Parameters
-- `drive` — drive letter e.g. `"C:"` (default `"C:"`)
+- `drive` — drive letter in format `"C:"` (default `"C:"`)
 - `only_active` — if `False`, for forensic level return all entries (default `True`)
 - `microseconds` — if `True`, return timestamps as epoch microseconds (default `False`, returns NTFS ticks)
 
