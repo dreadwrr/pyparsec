@@ -1,4 +1,4 @@
-Note originally made using ctypes and .dll library. I have instead used python c api so have to test before releasing which <br>
+Note originally made using ctypes and .dll library. I have instead used python c api so have to test before releasing which
 shouldnt be very long. <br><br>
 
 # mftparser
