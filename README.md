@@ -1,5 +1,9 @@
+05/09/20206 <br><br>
+
 Note originally made using ctypes and .dll library. I have since moved over to python c api so have to finish testing before releasing which <br>
 shouldnt be very long. <br><br>
+
+Will list compile steps for the .pyd <br><br>
 
 # mftparser
 A Python extension for parsing the MFT on Windows 10 / Windows 11. <br>
