@@ -1,5 +1,3 @@
-05/10/20206 <br><br>
-
 Note originally made using ctypes and .dll. but moved to python c api so have to finish testing before releasing <br>
 
 Purpose and initial concept was for file searching use. so accesses by volume if needing to read a mft dump there are other apis
@@ -22,6 +20,7 @@ pip install mftparser
 - `drive` — drive letter e.g. `"C:"` (default `"C:"`)
 - `only_active` — if `False`,  if set to False return all entries (default `True`, only in use entries)
 - `microseconds` — if `True`, return timestamps in epoch microseconds (default `False`, NTFS ticks)
+- `cutoff` - takes a timestamp in format `"2026-05-10T07:33:12"` or `"2026-05-10 07:33:12"` and return entries only from that time onward
 
 ## Usage
 ```python
