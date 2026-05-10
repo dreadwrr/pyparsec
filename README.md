@@ -1,7 +1,9 @@
 05/10/20206 <br><br>
 
-Note originally made using ctypes and .dll library. I have since moved over to python c api so have to finish testing before releasing which
-shouldnt be very long. <br><br>
+Note originally made using ctypes and .dll. but movedd to python c api so have to finish testing before releasing <br><br>
+
+Purpose and initial concept was to use for file searching. so accesses by volume if needing to read a mft dump there are other apis
+available https://github.com/omerbenamram/mft. or use the CLI version of mft parser.
 
 Will list compile steps for the .pyd <br><br>
 
