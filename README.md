@@ -30,17 +30,17 @@ for entry in results:
     print(path, name)
 ```
 
-## Functions
+# Functions
 mftparser.ScanVolume("C:", only_active=True, microseconds=False) <br><br>
 
-ntfs ticks to epoch microseconds
+## ntfs ticks to epoch microseconds
 mftparser.ntfs_to_us(ts)
 
-ntfs ticks to epoch nanoseconds
+## ntfs ticks to epoch nanoseconds
 mftparser.ntfs_to_ns(ts)
 
-file reference number to record number and sequence
+## file reference number to record number and sequence
 recno, seq = mftparser.frn_to_entry(frn)
 
-record number and sequence to file reference number
+## record number and sequence to file reference number
 frn = mftparser.entry_to_frn(recno, seq)
