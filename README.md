@@ -1,4 +1,3 @@
-# mftparser
 A Python extension for parsing the MFT on Windows 10 / Windows 11.
 Returns a list of tuples for all active entries on the volume.
 Requires administrator privileges.
