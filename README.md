@@ -1,4 +1,4 @@
-05/09/20206 <br><br>
+05/10/20206 <br><br>
 
 Note originally made using ctypes and .dll library. I have since moved over to python c api so have to finish testing before releasing which
 shouldnt be very long. <br><br>
@@ -8,7 +8,6 @@ Will list compile steps for the .pyd <br><br>
 # mftparser
 A Python extension for parsing the MFT on Windows 10 / Windows 11. <br>
 Returns a list of tuples for all active records <br>
-if listing all entries check that entry is not None as list is then sparse <br>
 Requires administrator privileges <br>
 
 ## Install
@@ -31,7 +30,6 @@ for entry in results:
 
 ## Functions
 mftparser.ScanVolume("C:", only_active=True, microseconds=False) <br><br>
-note if only_active is False check that entry is not None as it is sparse
 
 # NTFS ticks to epoch microseconds
 mftparser.ntfs_to_us(ts)
