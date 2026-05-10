@@ -8,7 +8,7 @@ pip install mftparser
 ## Parameters
 - `drive` — drive letter e.g. `"C:"` (default `"C:"`)
 - `only_active` — if `False`,  return all entries (default `True`)
-- `microseconds` — if `True`, return timestamps as epoch microseconds (default `False`, returns ntfs ticks)
+- `microseconds` — if `True`, return timestamps as epoch microseconds (default `False`, returns NTFS ticks)
 - `cutoff` — takes timestamp format `"2026-05-10T07:33:12"` or `"2026-05-10 07:33:12"` in system time. return entries only from that time onward
 
 # Functions
