@@ -1,15 +1,19 @@
 from setuptools import setup, Extension
  
 module = Extension(
-    'mftparser',
+    'mftparser.mftparser',
     sources=['parser.c', 'parserlib.c'],
     py_limited_api=True,
-    define_macros=[('Py_LIMITED_API', '0x03090000')],
-    extra_compile_args=['/D_CRT_SECURE_NO_WARNINGS'],
+    define_macros=[
+        ('Py_LIMITED_API', '0x03090000'),
+        ('_CRT_SECURE_NO_WARNINGS', '1'),
+    ],
 )
 
 setup(
     name='mftparser',
-    version='1.0',
+    version='0.1.3',
+    packages=['mftparser'],
+    options={'bdist_wheel': {'py_limited_api': 'cp39'}},
     ext_modules=[module],
 )

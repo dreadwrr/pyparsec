@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mftparser_dreadwrr"
-version = "0.1.2"
+version = "0.1.3"
 authors = [
   { name="Colby Saigeon", email="cole.saigeon@gmail.com" },
 ]
@@ -28,9 +28,6 @@ plat-name = "win_amd64"
 
 [tool.setuptools]
 package-dir = {"" = "."}
-
-[tool.setuptools.package-data]
-mftparser = ["*.pyd"]
 
 [tool.setuptools.packages.find]
 where = ["."]

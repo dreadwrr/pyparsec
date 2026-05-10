@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <time.h>
-#include "parser.h"
+#include "parsec.h"
 
 #define TICKS_PER_SECOND 10000000ULL  // 100ns tick
 #define TICKS_BTWN_1601_1970 116444736000000000ULL
