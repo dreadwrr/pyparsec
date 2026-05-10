@@ -10,7 +10,7 @@ pip install mftparser
 - `drive` — drive letter e.g. `"C:"` (default `"C:"`)
 - `only_active` — if `False`,  return all entries (default `True`)
 - `microseconds` — if `True`, return timestamps as epoch microseconds (default `False`, returns ntfs ticks)
-- `cutoff` — takes timestamp format `"2026-05-10T07:33:12"` or `"2026-05-10 07:33:12"` in system timie. return entries only from that time onward
+- `cutoff` — takes timestamp format `"2026-05-10T07:33:12"` or `"2026-05-10 07:33:12"` in system time. return entries only from that time onward
 
 # Functions
 mftparser.ScanVolume("C:", only_active=True, microseconds=False) <br><br>
