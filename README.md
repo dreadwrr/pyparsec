@@ -1,9 +1,9 @@
-Note originally made using ctypes and .dll. but moved to python c api so have to finish testing before releasing <br>
+Note originally made using ctypes and .dll. but decided on python c api so have to finish testing before releasing <br>
 
-Purpose and initial concept was for file searching use. so accesses by volume if needing to read a mft dump there are other apis
-available https://github.com/omerbenamram/mft. or use the CLI version of mft parser.
+Purpose and initial concept was file searching use. so accesses by volume. if needing to read a mft dump there are other apis
+available https://github.com/omerbenamram/mft. or use the CLI version.
 
-Can be expanded to include FILENAME timestamps but SI is used which is more reliable. Open to any suggestions to improve or support
+Can be expanded to include $FILENAME timestamps but SI is used which is more reliable. Open to any suggestions to improve or support
 use cases
 
 # mftparser
@@ -18,8 +18,8 @@ pip install mftparser
 - `drive` — drive letter e.g. `"C:"` (default `"C:"`)
 - `only_active` — if `False`,  if set to False return all entries (default `True`, only in use entries)
 - `microseconds` — if `True`, return timestamps in epoch microseconds (default `False`, NTFS ticks)
-- `cutoff` -from timestamp format `"2026-05-10T07:33:12"` or `"2026-05-10 07:33:12"` return entries only from that time onward
-
+- `cutoff` — from timestamp format `"2026-05-10T07:33:12"` or `"2026-05-10 07:33:12"` return entries only from that time onward
+ 
 ## Usage
 ```python
 import mftparser
@@ -33,10 +33,10 @@ for entry in results:
 ## Functions
 mftparser.ScanVolume("C:", only_active=True, microseconds=False) <br><br>
 
-# NTFS ticks to epoch microseconds
+# ntfs ticks to epoch microseconds
 mftparser.ntfs_to_us(ts)
 
-# NTFS ticks to epoch nanoseconds
+# ntfs ticks to epoch nanoseconds
 mftparser.ntfs_to_ns(ts)
 
 # file reference number to record number and sequence
