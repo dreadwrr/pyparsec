@@ -6,8 +6,6 @@ available https://github.com/omerbenamram/mft. or use the CLI version of mft par
 Can be expanded to include FILENAME timestamps but SI is used which is more reliable. Open to any suggestions to improve or support
 use cases
 
-Will list compile steps for the .pyd <br><br>
-
 # mftparser
 A Python extension for parsing the MFT on Windows 10 / Windows 11. <br>
 Returns a list of tuples for all active records <br>
