@@ -1,6 +1,6 @@
 ![alt text](https://raw.githubusercontent.com/dreadwrr/pyparsec/main/wlv.png)
 
-available on pypi https://pypi.org/project/mftparser/1.0.0/
+listed on pypi https://pypi.org/project/mftparser/1.0.0/
 
 A Python extension for parsing the MFT on Windows 10 / Windows 11.
 Returns a list of tuples for all active entries on the volume.
