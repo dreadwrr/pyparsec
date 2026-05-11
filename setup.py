@@ -2,7 +2,7 @@ from setuptools import setup, Extension
  
 module = Extension(
     'mftparser.mftparser',
-    sources=['parser.c', 'parserlib.c'],
+    sources=['parsec.c', 'parseclib.c'],
     py_limited_api=True,
     define_macros=[
         ('Py_LIMITED_API', '0x03090000'),
