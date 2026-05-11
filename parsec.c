@@ -251,7 +251,7 @@ void ProcessRecord(unsigned char *buf, uint16_t bytesPerSector, uint32_t recno, 
             break;
         if (attr->type == 0x10 && attr->non_resident == 0) {
             RESIDENT_ATTR_HEADER *res = (RESIDENT_ATTR_HEADER *)attr;  // not used originally. updated to use value_offset <--
-            // (STANDARD_INFORMATION_ATTR *)attr; // this was original see parser.h ln 59
+            // (STANDARD_INFORMATION_ATTR *)attr; // this was original see parsec.h ln 59
             STANDARD_INFORMATION_ATTR *si = (STANDARD_INFORMATION_ATTR *)((uint8_t *)attr + res->value_offset);  
             file_attribs = si->file_attributes;
             creation_time = si->creation_time;
@@ -264,7 +264,7 @@ void ProcessRecord(unsigned char *buf, uint16_t bytesPerSector, uint32_t recno, 
 
         if (attr->type == 0x30 && attr->non_resident == 0) {
             RESIDENT_ATTR_HEADER *res = (RESIDENT_ATTR_HEADER *)attr;  // not used originally. updated to use value_offset <--
-            // FILE_NAME_ATTR *fn = (FILE_NAME_ATTR *)attr; // this was original see parser.h ln 75
+            // FILE_NAME_ATTR *fn = (FILE_NAME_ATTR *)attr; // this was original see parsec.h ln 75
             FILE_NAME_ATTR *fn = (FILE_NAME_ATTR *)((uint8_t *)attr + res->value_offset);
 
             // some records may not have a usable name (only dos) in base record. store parent frn and get name after finishing from ExtEntry
@@ -959,8 +959,8 @@ int is_file(const char *path) {
 void Help(char* argv[]) {
     printf("MFT parsec \n\n\
     optional drive (default C:) \n\
-    parser.exe \n\
-    parser.exe S: \n\n\
+    parsec.exe \n\
+    parsec.exe S: \n\n\
     save mft to file \n\
     --output <mft raw> \n\
     note: above argument cannot be used with options below \n\n\
@@ -982,12 +982,12 @@ void Help(char* argv[]) {
 usage:
 
 optional drive (default C:)
-./parser.exe
+./parsec.exe
 or
-./parser.exe S:
-./parser.exe C: --cutoff "2026-03-19 10:13:18"
+./parsec.exe S:
+./parsec.exe C: --cutoff "2026-03-19 10:13:18"
 or
-./parser.exe --csv
+./parsec.exe --csv
 
 dump drive mft to file
 --output <target>
