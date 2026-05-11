@@ -14,16 +14,16 @@ pip install mftparser
 - `cutoff` — takes timestamp format `"2026-05-10T07:33:12"` or `"2026-05-10 07:33:12"` in system time. return entries only from that time onward
 
 # Functions
-mftparser.ScanVolume("C:", only_active=True, microseconds=False) <br><br>
+## mftparser.ScanVolume("C:", only_active=True, microseconds=False) <br><br>
+ 
+## mftparser.ntfs_to_us(ts)
+> ntfs ticks to epoch microseconds
 
-## ntfs ticks to epoch microseconds
-mftparser.ntfs_to_us(ts)
+## mftparser.ntfs_to_ns(ts)
+> ntfs ticks to epoch nanoseconds
 
-## ntfs ticks to epoch nanoseconds
-mftparser.ntfs_to_ns(ts)
+## recno, seq = mftparser.frn_to_entry(frn)
+> file reference number to record number and sequence
 
-## file reference number to record number and sequence
-recno, seq = mftparser.frn_to_entry(frn)
-
-## record number and sequence to a file reference number
-frn = mftparser.entry_to_frn(recno, seq)
+## frn = mftparser.entry_to_frn(recno, seq)
+> record number and sequence to a file reference number
