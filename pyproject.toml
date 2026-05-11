@@ -3,12 +3,12 @@ requires = ["setuptools>=64", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "mftparser_dreadwrr"
-version = "0.1.3"
+name = "mftparser"
+version = "1.0.0"
 authors = [
   { name="Colby Saigeon", email="cole.saigeon@gmail.com" },
 ]
-description = "package for parsing mft. a python wheel"
+description = "package for parsing mft from volume. a python wheel"
 readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [
