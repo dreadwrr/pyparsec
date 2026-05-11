@@ -270,7 +270,7 @@ static PyObject *ScanVolume(PyObject * self, PyObject * args, PyObject *kwargs) 
         PyTuple_SetItem(tuple, 4,
             PyBool_FromLong(e->in_use ? 1 : 0));
         PyTuple_SetItem(tuple, 5,
-            PyUnicode_FromString(e->dir_path ? e->dir_path : ""));
+            PyUnicode_FromString(path ? path : ""));  // e->dir_path
         PyTuple_SetItem(tuple, 6,
             PyUnicode_FromString(e->name ? e->name : ""));
         PyTuple_SetItem(tuple, 7,
