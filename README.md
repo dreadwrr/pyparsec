@@ -1,4 +1,4 @@
-CLI version can be found at https://github.com/dreadwrr/mft_parsec <br>
+This is based off of the parsec CLI version. it can be found at https://github.com/dreadwrr/mft_parsec <br>
 ![alt text](https://raw.githubusercontent.com/dreadwrr/pyparsec/main/wlv.png)
 
 listed on pypi https://pypi.org/project/mftparser/1.6.0/
