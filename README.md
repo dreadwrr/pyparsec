@@ -18,6 +18,8 @@ pip install mftparser
 
 # Functions
 ## results = mftparser.ScanVolume("C:", only_active=True, microseconds=False) <br><br>
+
+recno, sequence_num, parent_recno, parent_sequence, in_use, path, name, size, hardlinks, is_dir, is_hardlink, has_ads, file_attribs, mod_time, creation_time, mft_mod, access_time, usn = results
  
 ## mftparser.ntfs_to_us(ts)
 > ntfs ticks to epoch microseconds
