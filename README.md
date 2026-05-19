@@ -2,7 +2,8 @@
 
 listed on pypi https://pypi.org/project/mftparser/1.6.0/
 
-A Python extension for parsing the MFT on Windows 10 / Windows 11. Returns a list of tuples for all active entries on the volume. This can be used to find new or modified files efficiently as its not necessary to walk the file system. Requires administrator privileges.
+A Python extension for parsing the MFT on Windows 10 / Windows 11. Returns a list of tuples for all active entries on the volume. This can be used to find new or modified files efficiently as its not necessary to walk the file system.
+Requires administrator privileges.
 
 open to requests or contributors and other use cases. with the initial version things are looking good
 
