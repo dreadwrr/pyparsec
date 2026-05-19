@@ -43,3 +43,9 @@ or
 ## frn = mftparser.entry_to_frn(recno, seq)
 > record number and sequence to a file reference number
 
+# Example
+print(len(results))
+for entry in results:
+    if is_dir:
+        continue
+    ...    
