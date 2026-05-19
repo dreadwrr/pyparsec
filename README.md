@@ -20,7 +20,7 @@ pip install mftparser
 ## results = mftparser.ScanVolume("C:", only_active=True, microseconds=False) <br><br>
 > returns tuple with 18 fields per entry
 
-recno, sequence_num, parent_recno, parent_sequence, in_use, path, name, size, hardlinks, is_dir, is_hardlink, has_ads, file_attribs, mod_time, creation_time, mft_mod, access_time, usn = results
+recno, sequence_num, parent_recno, parent_sequence, in_use, path, name, size, hardlinks, is_dir, is_hardlink, has_ads, file_attribs, mod_time, creation_time, mft_mod, access_time, last_usn = results
 
 or
 
