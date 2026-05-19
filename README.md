@@ -24,11 +24,11 @@ recno, sequence_num, parent_recno, parent_sequence, in_use, path, name, size, ha
 
 or
 
-(
-    recno, sequence_num, parent_recno, parent_sequence,
-    in_use, path, name, size, hardlinks,
-    is_dir, is_hardlink, has_ads, file_attribs,
-    mod_time, creation_time, mft_mod, access_time, usn
+( <br>
+    recno, sequence_num, parent_recno, parent_sequence, <br>
+    in_use, path, name, size, hardlinks, <br>
+    is_dir, is_hardlink, has_ads, file_attribs, <br>
+    mod_time, creation_time, mft_mod, access_time, usn <br>
 ) = results
 
 ## mftparser.ntfs_to_us(ts)
