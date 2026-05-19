@@ -9,6 +9,45 @@ static void clean_up(HANDLE h, unsigned char *buf) {
         CloseHandle(h);
 }
 
+static PyObject *make_tuple(FileEntry *e, const char *name, uint64_t parent_frn, const char *path, bool is_hardlink,
+                            uint64_t mod_time, uint64_t c_time, uint64_t mft_mod, uint64_t a_time) {
+
+    // PyObject *tuple = PyTuple_New(16);  // if prealloc
+    // if (!tuple) {
+        // Py_DECREF(result);
+        // free_processed(buf);
+        // PyErr_SetString(PyExc_RuntimeError, "failed while converting results");
+        // return NULL;
+    // }
+    PyObject *tuple = PyTuple_New(18);
+    if (!tuple)
+        return NULL;
+
+    uint64_t parent_recno = parent_frn & FRN_RECORD_MASK;
+    uint16_t parent_seq = (uint16_t)(parent_frn >> 48);
+
+    PyTuple_SetItem(tuple, 0, PyLong_FromUnsignedLong(e->record_number));
+    PyTuple_SetItem(tuple, 1, PyLong_FromUnsignedLong(e->sequence_num));
+    PyTuple_SetItem(tuple, 2, PyLong_FromUnsignedLongLong(parent_recno));
+    PyTuple_SetItem(tuple, 3, PyLong_FromUnsignedLong(parent_seq));
+    PyTuple_SetItem(tuple, 4, PyBool_FromLong(e->in_use ? 1 : 0));
+    PyTuple_SetItem(tuple, 5, PyUnicode_FromString(path ? path : ""));  // e->dir_path
+    PyTuple_SetItem(tuple, 6, PyUnicode_FromString(name ? name : ""));
+    PyTuple_SetItem(tuple, 7, PyLong_FromUnsignedLongLong(e->size));
+    PyTuple_SetItem(tuple, 8, PyLong_FromUnsignedLong(e->hard_link_count));
+    PyTuple_SetItem(tuple, 9, PyBool_FromLong(e->is_dir ? 1 : 0));
+    PyTuple_SetItem(tuple, 10, PyBool_FromLong(is_hardlink ? 1 : 0));
+    PyTuple_SetItem(tuple, 11, PyBool_FromLong(e->has_ads ? 1 : 0));
+    PyTuple_SetItem(tuple, 12, PyLong_FromUnsignedLong(e->file_attribs));
+    PyTuple_SetItem(tuple, 13, PyLong_FromUnsignedLongLong(mod_time));
+    PyTuple_SetItem(tuple, 14, PyLong_FromUnsignedLongLong(c_time));
+    PyTuple_SetItem(tuple, 15, PyLong_FromUnsignedLongLong(mft_mod));
+    PyTuple_SetItem(tuple, 16, PyLong_FromUnsignedLongLong(a_time));
+    PyTuple_SetItem(tuple, 17, PyLong_FromUnsignedLongLong(e->usn));
+
+    return tuple;
+}
+
 static PyObject *ScanVolume(PyObject * self, PyObject * args, PyObject *kwargs) {
 
     static char *kwlist[] = {"drive", "only_active", "microseconds", "cutoff", NULL};
@@ -38,28 +77,32 @@ static PyObject *ScanVolume(PyObject * self, PyObject * args, PyObject *kwargs) 
         drive = "C:";
         
     } else {
-
-        if (!isalpha((unsigned char) drive[0]) || strlen(drive) < 2 || drive[1] != ':') {
+        if (!get_drive(drive, drive_buf)) {
             PyErr_Format(PyExc_RuntimeError, "invalid drive: %s", drive);
-            return NULL;
+            return NULL;           
         }
 
-        drive_buf[0] = drive[0];
-        drive_buf[1] = ':';
-        drive_buf[2] = '\0';
+        // if (!isalpha((unsigned char) drive[0]) || strlen(drive) < 2 || drive[1] != ':') {
+            // PyErr_Format(PyExc_RuntimeError, "invalid drive: %s", drive);
+            // return NULL;
+        // }
+
+        // drive_buf[0] = drive[0];
+        // drive_buf[1] = ':';
+        // drive_buf[2] = '\0';
 
         drive = drive_buf;
     }
 
-    // deleted is false (default). show only in use. saves time later iterating in python. has no effect on parsing speed
+    // default is show in use only. saves time later iterating in python but has no effect on parsing speed
     if (!in_use_arg)
         deleted = true;  // user passed false show all
 
     // any pre-filters
 
-    // default is ntfs ticks
+    // default ntfs ticks
     if (epoch_us_arg)
-        epoch_us = true;
+        epoch_us = true;  
 
     if (cutoff_arg) {
         strncpy(arg_buf, cutoff_arg, sizeof(arg_buf) - 1);
@@ -107,39 +150,52 @@ static PyObject *ScanVolume(PyObject * self, PyObject * args, PyObject *kwargs) 
             error_msg = error_buf;
         }
         clean_up(h, buf);
-        PyErr_SetString(PyExc_RuntimeError, error_msg);
+        PyErr_SetString(PyExc_OSError, error_msg);
         return NULL;
     }
 
     BootSector bootsector;
-    Read(h, &bootsector, 0, sizeof(bootsector));
-   
+    int res;
+
+    res = Read(h, &bootsector, 0, sizeof(bootsector));
+    if (res != ERR_OK) {
+        clean_up(h, buf);
+        PyErr_SetString(PyExc_RuntimeError, error_string(res));
+        return NULL;
+    }
+    
     /* verify drive */
     if (bootsector.bootSignature != 0xAA55) {
         clean_up(h, buf);
-        PyErr_SetString(PyExc_RuntimeError, "Invalid boot sector signature\n");
+        PyErr_SetString(PyExc_RuntimeError, "Invalid boot sector signature");
         return NULL;
     }
     if (memcmp(bootsector.name, "NTFS    ", 8) != 0) {
         clean_up(h, buf);
-        PyErr_SetString(PyExc_RuntimeError, "Not an NTFS volume\n");
+        PyErr_SetString(PyExc_RuntimeError, "Not an NTFS volume");
         return NULL;
     }
 
     uint32_t record_size = GetFileRecordSize(&bootsector);
     uint64_t bytesPerCluster = (uint64_t)bootsector.bytesPerSector * bootsector.sectorsPerCluster;
     uint64_t mftOffset = bootsector.mftStart * bytesPerCluster;
-
+    
     buf = malloc(record_size);
     if (!buf) {
         clean_up(h, buf);
         PyErr_SetString(PyExc_RuntimeError, "malloc failed\n");
         return NULL;
     }
-
+    
     // record 0
-    Read(h, buf, mftOffset, record_size);
+    res = Read(h, buf, mftOffset, record_size);
+    if (res != ERR_OK) {
+        clean_up(h, buf);
 
+        PyErr_SetString(PyExc_RuntimeError, error_string(res));
+        return NULL;
+    }
+    
     hrec = (FILE_RECORD_HEADER *)buf;
 
     if (!apply_usa(buf, bootsector.bytesPerSector)) {
@@ -150,23 +206,31 @@ static PyObject *ScanVolume(PyObject * self, PyObject * args, PyObject *kwargs) 
 
     if (memcmp(hrec->signature, "FILE", 4) != 0) {
         clean_up(h, buf);
-        PyErr_SetString(PyExc_RuntimeError, "Invalid MFT record signature (expected FILE)\n");
+        PyErr_SetString(PyExc_RuntimeError, "Invalid MFT record signature (expected FILE)");
         return NULL;
     } // } else {
         // success
     // }
     
-    uint64_t record_count = ParseAttributes(h, buf, record_size, hrec, bytesPerCluster, bootsector.bytesPerSector, deleted, false);
-    if (!record_count) {
-        error_msg = "no record count failed to parse.\n";
+    res = ParseAttributes(MODE_PARSE, h, NULL, buf, record_size, hrec, bytesPerCluster, bootsector.bytesPerSector, NULL, deleted, false);
+    
+    if (res != ERR_OK) {
+        clean_up(h, buf);
+
+        PyErr_SetString(PyExc_RuntimeError, error_string(res));
+        return NULL;
+    }
+
+    // are there results to process?
+    if (!entry_count) {
+        clean_up(h, buf);
+        PyErr_SetString(PyExc_RuntimeError, "no records returned failed to parse");  // PyErr_Format(PyExc_RuntimeError, "%s", msg);
+        
+        return NULL;
     }
 
     CloseHandle(h);
-    if (error_msg) {
-        free_processed(buf);
-        PyErr_SetString(PyExc_RuntimeError, error_msg);
-        return NULL;
-    }
+    h = INVALID_HANDLE_VALUE;
 
     /* check extension records for over flows ie name missing <-- this ensures all dirs can be built */
     for (uint32_t i = 0; i < ext_count; i++) {
@@ -181,34 +245,9 @@ static PyObject *ScanVolume(PyObject * self, PyObject * args, PyObject *kwargs) 
         }
     }
 
-    // tack on hardlinks to end of entries
-    EnsureEntryCapacity(entry_capacity + link_count);
-    for (uint32_t i = 0; i < link_count; i++) {
-        uint32_t recno = links[i].recno;
-        FileEntry *dst = &entries[entry_count++];
-        *dst = entries[recno];
-        dst->parent_frn = links[i].parent_frn;
-        dst->name       = _strdup(links[i].name);
-        dst->name_len   = links[i].name_len;
-        max_count++;
-    }
+    // make list
 
-    // free some memory
-    if (links) {
-        for (uint32_t i = 0; i < link_count; i++) {
-            free(links[i].name);
-        }
-        free(links);
-        links = NULL;
-        link_count = 0;
-        link_capacity = 0;
-    }
-
-    // finally make list
-
-    char path[MAX_PATH];
-    uint64_t parent_recno = 0;
-    uint16_t parent_seq = 0;
+    char path[MAX_PTH];
     uint64_t mod_time = 0;
     uint64_t c_time = 0;
     uint64_t mft_mod = 0;
@@ -240,60 +279,20 @@ static PyObject *ScanVolume(PyObject * self, PyObject * args, PyObject *kwargs) 
         if (cutoff_time > 0 && e->modification_time < cutoff_time && e->creation_time < cutoff_time)
             continue;
  
-        // PyObject *tuple = PyTuple_New(16);  // if prealloc
-        // if (!tuple) {
-            // Py_DECREF(result);
-            // free_processed(buf);
-            // PyErr_SetString(PyExc_RuntimeError, "failed while converting results");
-            // return NULL;
-        // }
-        PyObject *tuple = PyTuple_New(16);
-        if (!tuple) {
-            Py_DECREF(result);
-            PyErr_SetString(PyExc_RuntimeError, "failed while converting results");
-            return NULL;
-        }
-
-        BuildPath(i, entries[i].name, entries[i].name_len, path, sizeof(path));
-
-        parent_recno = e->parent_frn & FRN_RECORD_MASK;
-        parent_seq = (uint16_t)(e->parent_frn >> 48);
-
-        PyTuple_SetItem(tuple, 0,
-            PyLong_FromUnsignedLong(e->record_number));
-        PyTuple_SetItem(tuple, 1,
-            PyLong_FromUnsignedLong(e->sequence_num));
-        PyTuple_SetItem(tuple, 2,
-            PyLong_FromUnsignedLongLong(parent_recno));
-        PyTuple_SetItem(tuple, 3,
-            PyLong_FromUnsignedLong(parent_seq));
-        PyTuple_SetItem(tuple, 4,
-            PyBool_FromLong(e->in_use ? 1 : 0));
-        PyTuple_SetItem(tuple, 5,
-            PyUnicode_FromString(path ? path : ""));  // e->dir_path
-        PyTuple_SetItem(tuple, 6,
-            PyUnicode_FromString(e->name ? e->name : ""));
-        PyTuple_SetItem(tuple, 7,
-            PyLong_FromUnsignedLongLong(e->size));
-        PyTuple_SetItem(tuple, 8,
-            PyLong_FromUnsignedLong(e->hard_link_count));
-        PyTuple_SetItem(tuple, 9,
-            PyBool_FromLong(e->is_dir ? 1 : 0));
-        PyTuple_SetItem(tuple, 10,
-            PyBool_FromLong(e->has_ads ? 1 : 0));
-        PyTuple_SetItem(tuple, 11,
-            PyLong_FromUnsignedLong(e->file_attribs));
-
         mod_time = epoch_us ? ntfs_to_epoch_us(e->modification_time) : e->modification_time;
         c_time   = epoch_us ? ntfs_to_epoch_us(e->creation_time) : e->creation_time;
         mft_mod  = epoch_us ? ntfs_to_epoch_us(e->mft_modification_time) : e->mft_modification_time;
         a_time   = epoch_us ? ntfs_to_epoch_us(e->access_time) : e->access_time;
+    
+        BuildPath(i, e->name, e->name_len, path, sizeof(path));
 
-        PyTuple_SetItem(tuple, 12, PyLong_FromUnsignedLongLong(mod_time));
-        PyTuple_SetItem(tuple, 13, PyLong_FromUnsignedLongLong(c_time));
-        PyTuple_SetItem(tuple, 14, PyLong_FromUnsignedLongLong(mft_mod));
-        PyTuple_SetItem(tuple, 15, PyLong_FromUnsignedLongLong(a_time));
-
+        PyObject *tuple = make_tuple(e, e->name, e->parent_frn, path, false, mod_time, c_time, mft_mod, a_time);
+        if (!tuple) {
+            Py_DECREF(result);
+            free_processed(buf);
+            PyErr_SetString(PyExc_RuntimeError, "failed while converting results");
+            return NULL;
+        }
         // PyList_SetItem(result, i, tuple);  // if prealloc
         if (PyList_Append(result, tuple) < 0) {
             Py_DECREF(tuple);
@@ -301,9 +300,34 @@ static PyObject *ScanVolume(PyObject * self, PyObject * args, PyObject *kwargs) 
             free_processed(buf);
             PyErr_SetString(PyExc_RuntimeError, "failed to convert results");
             return NULL;
-        }
-
+        }       
         Py_DECREF(tuple);  // comment out if prealloc
+
+        
+        for (uint16_t j = 0; j < e->link_count; j++) {
+            
+            LinkEntry *lnk = &links[e->link_index + j];
+ 
+            BuildPath(lnk->recno, lnk->name, lnk->name_len, path, sizeof(path));
+
+            tuple = make_tuple(e, lnk->name, lnk->parent_frn, path, true, mod_time, c_time, mft_mod, a_time);
+            
+            if (!tuple) {
+                Py_DECREF(result);
+                free_processed(buf);
+                PyErr_SetString(PyExc_RuntimeError, "failed while converting results links");
+                return NULL;
+            }
+
+            if (PyList_Append(result, tuple) < 0) {
+                Py_DECREF(tuple);
+                Py_DECREF(result);
+                free_processed(buf);
+                PyErr_SetString(PyExc_RuntimeError, "failed to convert result link");
+                return NULL;
+            }       
+            Py_DECREF(tuple);
+        }
     }
 
     free_processed(buf);
