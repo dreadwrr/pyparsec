@@ -44,8 +44,8 @@ or
 > record number and sequence to a file reference number
 
 # Example
-print(len(results))
-for entry in results:
-    if is_dir:
-        continue
-    ...    
+print(len(results)) <br>
+for entry in results: <br>
+    if is_dir: <br>
+        continue <br>
+    ...
