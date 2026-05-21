@@ -48,6 +48,7 @@ or
 ```
 print(len(results))
 for entry in results:
+    is_dir = entry[9]
     if is_dir:
         continue
     ...
