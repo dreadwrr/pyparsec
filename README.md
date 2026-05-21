@@ -29,7 +29,7 @@ or
     recno, sequence_num, parent_recno, parent_sequence, <br>
     in_use, path, name, size, hardlinks, <br>
     is_dir, is_hardlink, has_ads, file_attribs, <br>
-    mod_time, creation_time, mft_mod, access_time, usn <br>
+    mod_time, creation_time, mft_mod, access_time, last_usn <br>
 ) = results
 
 ## mftparser.ntfs_to_us(ts)
