@@ -1,6 +1,6 @@
 ![alt text](https://raw.githubusercontent.com/dreadwrr/pyparsec/main/wlv.png)
 
-listed on pypi https://pypi.org/project/mftparser/1.6.0/ <br>
+listed on pypi https://pypi.org/project/mftparser/1.6.1/ <br>
 CLI version can be found at https://github.com/dreadwrr/mft_parsec <br>
 
 A Python extension for parsing the MFT on Windows 10 / Windows 11. Returns a list of tuples for all active entries on the volume. This can be used to find new or modified files efficiently as its not necessary to walk the file system.
