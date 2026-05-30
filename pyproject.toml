@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mftparser"
-version = "1.6.0"
+version = "1.6.1"
 authors = [
   { name="Colby Saigeon", email="cole.saigeon@gmail.com" },
 ]
@@ -19,6 +19,7 @@ license = "MIT"
 license-files = ["LICEN[CS]E*"]
 
 [project.urls]
+Changelog = "https://github.com/dreadwrr/pyparsec/blob/main/CHANGELOG.md"
 Homepage = "https://github.com/dreadwrr/pyparsec"
 Issues = "https://github.com/dreadwrr/pyparsec/issues"
 

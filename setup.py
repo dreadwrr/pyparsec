@@ -12,7 +12,7 @@ module = Extension(
 
 setup(
     name='mftparser',
-    version='1.6.0',
+    version='1.6.1',
     packages=['mftparser'],
     options={'bdist_wheel': {'py_limited_api': 'cp39'}},
     ext_modules=[module],
