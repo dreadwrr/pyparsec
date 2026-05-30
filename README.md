@@ -46,6 +46,7 @@ or
 
 # Example
 ```
+results = mftparser.ScanVolume()
 print(len(results))
 for entry in results:
     is_dir = entry[9]
