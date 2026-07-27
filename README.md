@@ -54,3 +54,18 @@ for entry in results:
         continue
     ...
 ```
+    
+```
+recno, sequence_num, parent_recno, parent_sequence, in_use, path, name, size, hardlinks, is_dir, is_hardlink, has_ads, file_attribs, mod_time, creation_time, mft_mod, access_time, last_usn = results
+
+for entry in results:
+    if is_dir:
+        parent_frn = mftparser.entry_to_frn(parent_recno, parent_sequence)
+        dirs[frn] = {
+            "parent": parent_frn,
+            "name": name,
+            "path": path
+        }
+    else:
+        fc.append((recno, sequence_num, in_use, parent_recno, parent_squence, path, name, size, hardlinks, has_ads, file_attribs, creation_time, mod_time, mft_mod, access_time)
+```
