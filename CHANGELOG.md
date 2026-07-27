@@ -1,3 +1,9 @@
-## [1.6.1] - 2026-05-29
+# Changelog
+
+## 1.7.1
+
 ### Added
-- added to read me tuple format and example on bottom
+- Second example
+
+### Fixed
+- Overviewed correct implementation and design remains unchanged
