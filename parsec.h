@@ -33,6 +33,18 @@ typedef enum {
 } ErrorCode;
         
 #pragma pack(push, 1)
+
+typedef struct {
+    uint32_t type;             // Attribute type, e.g. 0x80
+    uint16_t length;           // Length of this entry
+    uint8_t  name_length;      // Name length in WCHARs
+    uint8_t  name_offset;      // Offset to name // reserved
+    int64_t  lowest_vcn;
+    uint64_t file_reference;   // Referenced MFT record + sequence
+    uint16_t reserved;
+    // UTF-16 attribute name follows
+} ATTRIBUTE_LIST_ENTRY;
+
 typedef struct {
     char     signature[4];
     uint16_t usa_offset;
@@ -164,6 +176,7 @@ typedef struct {
     uint8_t in_use;
     uint8_t is_dir;
     uint8_t has_ads;
+    uint8_t need_size;
     uint16_t hard_link_count;
     uint16_t link_index;
     uint16_t link_count;
@@ -182,6 +195,7 @@ typedef struct {
     uint64_t parent_frn;
     char *name;
     uint16_t name_len;
+    uint64_t size;          // Unnamed $DATA stream size
 } ExtEntry;
 
 extern LinkEntry *links;
