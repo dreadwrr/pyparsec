@@ -81,5 +81,5 @@ for entry in results:
             "path": path
         }
     else:
-        fc.append((recno, sequence_num, in_use, parent_recno, parent_sequence, path, name, size, hardlinks, has_ads, file_attribs, creation_time, mod_time, mft_mod, access_time))
+        fc.append((recno, sequence_num, in_use, parent_recno, parent_sequence, path, name, size, hardlinks, has_ads, file_attribs, creation_time, mod_time, mft_mod, access_time, last_usn))
 ```
