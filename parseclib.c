@@ -263,6 +263,11 @@ static PyObject *ScanVolume(PyObject * self, PyObject * args, PyObject *kwargs) 
             entries[b].name_len = ext[i].name_len;
             entries[b].parent_frn = ext[i].parent_frn;
         }
+
+        if (ext[i].size && entries[b].need_size && entries[b].frn == ext[i].frn) {
+            entries[b].size = ext[i].size;
+            entries[b].need_size = 0;
+        }
     }
 
     // make list
@@ -557,6 +562,11 @@ static PyObject *CreateCsv(PyObject * self, PyObject * args, PyObject *kwargs) {
             entries[b].name = _strdup(ext[i].name);
             entries[b].name_len = ext[i].name_len;
             entries[b].parent_frn = ext[i].parent_frn;
+        }
+
+        if (ext[i].size && entries[b].need_size && entries[b].frn == ext[i].frn) {
+            entries[b].size = ext[i].size;
+            entries[b].need_size = 0;
         }
     }
 
