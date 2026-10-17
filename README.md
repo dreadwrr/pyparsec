@@ -1,7 +1,7 @@
 ![alt text](https://raw.githubusercontent.com/dreadwrr/pyparsec/main/wlv.png)
 
-10/16/2026<br>
-New save mft dump and output csv added to repo ahead of package update release
+10/17/2026<br>
+The new update is in the repo ahead of release. This includes dump mft and output csv. It is currently in testing.
 
 listed on pypi https://pypi.org/project/mftparser/1.7.1/ <br>
 CLI version can be found at https://github.com/dreadwrr/mft_parsec <br>
