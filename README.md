@@ -1,7 +1,7 @@
 ![alt text](https://raw.githubusercontent.com/dreadwrr/pyparsec/main/wlv.png)
 
 10/17/2026<br>
-The new update is in the repo which has dump mft and output csv. Currently testing before final release <br>
+The new update is in the repo which has dump mft and output csv. Currently testing before next release to pypi <br>
 next update will include: <br>
 frn and parent frn so not having to rebuild it in python <br>
 filesize fix for files that have their size in extension record. Currently downloads report size 0 because of this as noted in issues. <br>
