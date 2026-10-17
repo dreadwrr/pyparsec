@@ -1,5 +1,7 @@
 from .mftparser import (
-    ScanVolume
+    ScanVolume,
+    CreateCsv,
+    DumpMft,
 )
 
 from .units import (
@@ -11,6 +13,8 @@ from .units import (
 
 __all__ = [
     "ScanVolume",
+    "CreateCsv",
+    "DumpMft",
     "ntfs_to_us",
     "ntfs_to_ns",
     "frn_to_entry",
