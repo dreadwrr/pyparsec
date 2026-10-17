@@ -36,7 +36,7 @@ or
 ) = results
 
 ## output_path = mftparser.CreateCsv("C:", output="C:\\file.csv") <br><br>
-> input required can be drive or raw mft file. if output is not specified output to pwd.
+> input required can be drive or raw mft file. if output is not specified output to pwd. returns the result path.
 
 ## output_path = mftparser.DumpMft("C:", output="C:\\mft.raw") <br><br>
 > input takes the drive and default is C: if not specified. output same as above
