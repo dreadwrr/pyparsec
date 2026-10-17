@@ -1,6 +1,7 @@
 #ifndef PARSEC_H
 #define PARSEC_H
 
+#include <stdio.h>
 #include <stdint.h>
 #include <windows.h>
 #include <stdbool.h>
@@ -203,8 +204,10 @@ int EnsureEntryCapacity(uint32_t recno);
 int BuildDirPath(uint32_t recno, char *out, size_t outSize);
 int BuildPath(uint32_t recno, const char *name, uint16_t name_len, char *out, size_t outSize);
 int get_drive(const char *path, char out[3]);
+int is_file(const char *path);
 uint64_t ntfs_to_epoch_us(uint64_t ntfs);
 uint64_t ParseDatetimeToNtfs(const char *input);
+void PrintRuns (FILE *out, FileEntry *entries, char *path, size_t path_size, bool csv, bool deleted);
 int ParseAttributes(ParseMode mode, HANDLE h, HANDLE o, unsigned char *buf, uint32_t record_size, FILE_RECORD_HEADER *hrec, uint64_t bytesPerCluster, 
                     uint16_t bytesPerSector, uint64_t *record_count, bool deleted, bool has_target);
 void free_processed(unsigned char *buff);
