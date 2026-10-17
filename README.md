@@ -35,10 +35,10 @@ or
     mod_time, creation_time, mft_mod, access_time, last_usn <br>
 ) = results
 
-## output_path = mftparser.CreateCsv("C:", output="C:\\file.csv") <br><br>
+## output_path = mftparser.CreateCsv("C:", output="C:\\\\file.csv") <br><br>
 > input required can be drive or raw mft file. if output is not specified output to pwd. returns the result path.
 
-## output_path = mftparser.DumpMft("C:", output="C:\\mft.raw") <br><br>
+## output_path = mftparser.DumpMft("C:", output="C:\\\\mft.raw") <br><br>
 > input takes the drive and default is C: if not specified. output same as above
 
 ## mftparser.ntfs_to_us(ts)
