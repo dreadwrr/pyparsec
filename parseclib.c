@@ -231,9 +231,9 @@ static PyObject *ScanVolume(PyObject * self, PyObject * args, PyObject *kwargs) 
         clean_up(h, buf);
         return NULL;
     }
-
+    Py_BEGIN_ALLOW_THREADS
     res = ParseAttributes(MODE_PARSE, h, NULL, buf, record_size, hrec, bytesPerCluster, bytesPerSector, NULL, deleted, false);
-    
+    Py_END_ALLOW_THREADS
     if (res != ERR_OK) {
         clean_up(h, buf);
 
@@ -308,7 +308,7 @@ static PyObject *ScanVolume(PyObject * self, PyObject * args, PyObject *kwargs) 
         c_time   = epoch_us ? ntfs_to_epoch_us(e->creation_time) : e->creation_time;
         mft_mod  = epoch_us ? ntfs_to_epoch_us(e->mft_modification_time) : e->mft_modification_time;
         a_time   = epoch_us ? ntfs_to_epoch_us(e->access_time) : e->access_time;
-    
+
         BuildPath(i, e->name, e->name_len, path, sizeof(path));
 
         PyObject *tuple = make_tuple(e, e->name, e->parent_frn, path, false, mod_time, c_time, mft_mod, a_time);
@@ -524,6 +524,7 @@ static PyObject *CreateCsv(PyObject * self, PyObject * args, PyObject *kwargs) {
     // uint64_t record_count = 0; // diagnostics for stdout
     // res = ParseAttributes(MODE_PARSE, h, NULL, buf, record_size, hrec, bytesPerCluster, bootsector.bytesPerSector, &record_count, deleted, has_target); template
 
+    Py_BEGIN_ALLOW_THREADS
     // drive
     if (!is_dump) {
         res = ParseAttributes(MODE_PARSE, h, NULL, buf, record_size, hrec, bytesPerCluster, bytesPerSector, NULL, false, false);
@@ -531,7 +532,7 @@ static PyObject *CreateCsv(PyObject * self, PyObject * args, PyObject *kwargs) {
     } else {
         res = ParseAttributes(MODE_READ, h, NULL, buf, record_size, hrec, 0, bytesPerSector, NULL, false, false);  // &record_count
     }
-
+    Py_END_ALLOW_THREADS
     if (res != ERR_OK) {
         clean_up(h, buf);
         // CloseHandle(o);
@@ -679,9 +680,9 @@ static PyObject *DumpMft(PyObject * self, PyObject * args, PyObject *kwargs)
         CloseHandle(o);
         return NULL;
     }
-
+    Py_BEGIN_ALLOW_THREADS
     res = ParseAttributes(MODE_WRITE, h, o, buf, record_size, hrec, bytesPerCluster, bootsector.bytesPerSector, NULL, false, false);
-
+    Py_END_ALLOW_THREADS
     const char *output_path = output;
     char path[MAX_PTH];
 
