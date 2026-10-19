@@ -231,8 +231,12 @@ static PyObject *ScanVolume(PyObject * self, PyObject * args, PyObject *kwargs) 
         clean_up(h, buf);
         return NULL;
     }
+    
+    uint64_t record_count = 0;
+    // uint32_t processed = 0;
+
     Py_BEGIN_ALLOW_THREADS
-    res = ParseAttributes(MODE_PARSE, h, NULL, buf, record_size, hrec, bytesPerCluster, bytesPerSector, NULL, deleted, false);
+    res = ParseAttributes(MODE_PARSE, h, NULL, buf, record_size, hrec, bytesPerCluster, bytesPerSector, &record_count, deleted, false);
     Py_END_ALLOW_THREADS
     if (res != ERR_OK) {
         clean_up(h, buf);
@@ -269,6 +273,10 @@ static PyObject *ScanVolume(PyObject * self, PyObject * args, PyObject *kwargs) 
             entries[b].need_size = 0;
         }
     }
+
+    // processed = (uint32_t)entry_count;
+
+    // fprintf(stderr,"Total mft records   : %lu\nRecords parsed      : %lu\n", (unsigned long)record_count, (unsigned long)processed);
 
     // make list
 
@@ -453,9 +461,9 @@ static PyObject *CreateCsv(PyObject * self, PyObject * args, PyObject *kwargs) {
         output = default_output;
 
     }
-
-    // if the input is a file the default filename might  be the same as the input 
-    if (is_dump && _stricmp(input, output) == 0) {
+    // originally was if the input is a file the default filename might  be the same as the input 
+    // if the input is the same as output abort
+    if (_stricmp(input, output) == 0) {
         PyErr_Format(PyExc_RuntimeError, "input: %s cannot be the same as output %s", input, output);
         return NULL;
     }
@@ -469,11 +477,11 @@ static PyObject *CreateCsv(PyObject * self, PyObject * args, PyObject *kwargs) {
     }
     // exit if output is in volume $MFT format ie X:\\$MFT
     if (strlen(output) == 7 &&
+        output[1] == ':' &&
         output[2] == '\\' &&
-        output[7] == '\0' &&
         _stricmp(output + 3, "$MFT") == 0) {
-        PyErr_Format(PyExc_ValueError, "volume mft: %s cannot be used for input", output);
-        return 1;
+        PyErr_Format(PyExc_ValueError, "volume mft: %s cannot be used for output", output);
+        return NULL;
     }
 
     // o = CreateFileA(
@@ -492,6 +500,15 @@ static PyObject *CreateCsv(PyObject * self, PyObject * args, PyObject *kwargs) {
         // PyErr_SetString(PyExc_OSError, error_msg);
         // return NULL;
     // }
+    
+    DWORD attrs = GetFileAttributesA(output);
+
+    if (attrs != INVALID_FILE_ATTRIBUTES &&
+        (attrs & FILE_ATTRIBUTE_DIRECTORY)) {
+        PyErr_SetString(PyExc_OSError, "Error: output path must be a filepath not directory.");
+        return NULL;
+    }
+
     o = fopen(output, "w");
     if (o == NULL) {
         PyErr_SetFromErrnoWithFilename(PyExc_OSError, output);
@@ -596,6 +613,9 @@ static PyObject *DumpMft(PyObject * self, PyObject * args, PyObject *kwargs)
     char volume[16];
 
     HANDLE o;
+
+    size_t str_len = 0;
+
     const char *drive = NULL;
     const char *output = NULL;  // save or dump mode
 
@@ -607,12 +627,20 @@ static PyObject *DumpMft(PyObject * self, PyObject * args, PyObject *kwargs)
         drive = "C:";
         
     } else {
-        if (!get_drive(drive, drive_buf)) {
-            PyErr_Format(PyExc_RuntimeError, "invalid drive: %s", drive);
+        str_len = strlen(drive);
+        if (str_len > 1 && str_len <= 3 &&
+            isalpha((unsigned char) drive[0]) &&
+            drive[1] == ':') {
+
+            if (!get_drive(drive, drive_buf)) {
+                PyErr_Format(PyExc_RuntimeError, "invalid drive: %s", drive);
+                return NULL;
+            }
+            drive = drive_buf;
+        } else {
+            PyErr_Format(PyExc_RuntimeError, "drive must be provided. given: %s", drive);
             return NULL;
         }
-
-        drive = drive_buf;
     }
 
     // Py_BEGIN_ALLOW_THREADS
@@ -636,8 +664,8 @@ static PyObject *DumpMft(PyObject * self, PyObject * args, PyObject *kwargs)
 
     // exit if output is in volume $MFT format ie X:\\$MFT
     if (strlen(output) == 7 &&
+        output[1] == ':' &&
         output[2] == '\\' &&
-        output[7] == '\0' &&
         _stricmp(output + 3, "$MFT") == 0) {
         PyErr_Format(PyExc_ValueError, "volume mft: %s cannot be used for output", output);
         return NULL;
@@ -654,7 +682,7 @@ static PyObject *DumpMft(PyObject * self, PyObject * args, PyObject *kwargs)
     );
     if (o == INVALID_HANDLE_VALUE) {
 
-        snprintf(error_buf, sizeof(error_buf), "Failed to create output file: %s\n", output);
+        snprintf(error_buf, sizeof(error_buf), "Failed to create output filename: %s ensure it is a valid filename\n", output);
         error_msg = error_buf;
         PyErr_SetString(PyExc_OSError, error_msg);
         return NULL;
@@ -676,10 +704,14 @@ static PyObject *DumpMft(PyObject * self, PyObject * args, PyObject *kwargs)
     int res = ValidateMft(volume, &h, &buf, &hrec, &record_size, &bytesPerCluster, &bytesPerSector, &bootsector, false);
 
     if (res != ERR_OK) {
+        // formatting // fprintf(stderr,"Total mft records   : %lu\nRecords parsed      : %lu\n", (unsigned long)record_count, (unsigned long)processed);
+        // fprintf(stderr,"error\n");
         clean_up(h, buf);
         CloseHandle(o);
+        
         return NULL;
     }
+
     Py_BEGIN_ALLOW_THREADS
     res = ParseAttributes(MODE_WRITE, h, o, buf, record_size, hrec, bytesPerCluster, bootsector.bytesPerSector, NULL, false, false);
     Py_END_ALLOW_THREADS
