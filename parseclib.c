@@ -21,7 +21,7 @@ static PyObject *make_tuple(FileEntry *e, const char *name, uint64_t parent_frn,
         // PyErr_SetString(PyExc_RuntimeError, "failed while converting results");
         // return NULL;
     // }
-    PyObject *tuple = PyTuple_New(18);
+    PyObject *tuple = PyTuple_New(20);
     if (!tuple)
         return NULL;
 
@@ -30,22 +30,24 @@ static PyObject *make_tuple(FileEntry *e, const char *name, uint64_t parent_frn,
 
     PyTuple_SetItem(tuple, 0, PyLong_FromUnsignedLong(e->record_number));
     PyTuple_SetItem(tuple, 1, PyLong_FromUnsignedLong(e->sequence_num));
-    PyTuple_SetItem(tuple, 2, PyLong_FromUnsignedLongLong(parent_recno));
-    PyTuple_SetItem(tuple, 3, PyLong_FromUnsignedLong(parent_seq));
-    PyTuple_SetItem(tuple, 4, PyBool_FromLong(e->in_use ? 1 : 0));
-    PyTuple_SetItem(tuple, 5, PyUnicode_FromString(path ? path : ""));  // e->dir_path
-    PyTuple_SetItem(tuple, 6, PyUnicode_FromString(name ? name : ""));
-    PyTuple_SetItem(tuple, 7, PyLong_FromUnsignedLongLong(e->size));
-    PyTuple_SetItem(tuple, 8, PyLong_FromUnsignedLong(e->hard_link_count));
-    PyTuple_SetItem(tuple, 9, PyBool_FromLong(e->is_dir ? 1 : 0));
-    PyTuple_SetItem(tuple, 10, PyBool_FromLong(is_hardlink ? 1 : 0));
-    PyTuple_SetItem(tuple, 11, PyBool_FromLong(e->has_ads ? 1 : 0));
-    PyTuple_SetItem(tuple, 12, PyLong_FromUnsignedLong(e->file_attribs));
-    PyTuple_SetItem(tuple, 13, PyLong_FromUnsignedLongLong(mod_time));
-    PyTuple_SetItem(tuple, 14, PyLong_FromUnsignedLongLong(c_time));
-    PyTuple_SetItem(tuple, 15, PyLong_FromUnsignedLongLong(mft_mod));
-    PyTuple_SetItem(tuple, 16, PyLong_FromUnsignedLongLong(a_time));
-    PyTuple_SetItem(tuple, 17, PyLong_FromUnsignedLongLong(e->usn));
+    PyTuple_SetItem(tuple, 2, PyLong_FromUnsignedLongLong(e->frn));
+    PyTuple_SetItem(tuple, 3, PyLong_FromUnsignedLongLong(parent_frn));
+    PyTuple_SetItem(tuple, 4, PyLong_FromUnsignedLongLong(parent_recno));
+    PyTuple_SetItem(tuple, 5, PyLong_FromUnsignedLong(parent_seq));
+    PyTuple_SetItem(tuple, 6, PyBool_FromLong(e->in_use ? 1 : 0));
+    PyTuple_SetItem(tuple, 7, PyUnicode_FromString(path ? path : ""));  // e->dir_path
+    PyTuple_SetItem(tuple, 8, PyUnicode_FromString(name ? name : ""));
+    PyTuple_SetItem(tuple, 9, PyLong_FromUnsignedLongLong(e->size));
+    PyTuple_SetItem(tuple, 10, PyLong_FromUnsignedLong(e->hard_link_count));
+    PyTuple_SetItem(tuple, 11, PyBool_FromLong(e->is_dir ? 1 : 0));
+    PyTuple_SetItem(tuple, 12, PyBool_FromLong(is_hardlink ? 1 : 0));
+    PyTuple_SetItem(tuple, 13, PyBool_FromLong(e->has_ads ? 1 : 0));
+    PyTuple_SetItem(tuple, 14, PyLong_FromUnsignedLong(e->file_attribs));
+    PyTuple_SetItem(tuple, 15, PyLong_FromUnsignedLongLong(mod_time));
+    PyTuple_SetItem(tuple, 16, PyLong_FromUnsignedLongLong(c_time));
+    PyTuple_SetItem(tuple, 17, PyLong_FromUnsignedLongLong(mft_mod));
+    PyTuple_SetItem(tuple, 18, PyLong_FromUnsignedLongLong(a_time));
+    PyTuple_SetItem(tuple, 19, PyLong_FromUnsignedLongLong(e->usn));
 
     return tuple;
 }
