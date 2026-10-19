@@ -1,12 +1,6 @@
 ![alt text](https://raw.githubusercontent.com/dreadwrr/pyparsec/main/wlv.png)
 
-10/17/2026<br>
-The new update is in the repo which has dump mft and output csv. Currently testing before next release to pypi <br>
-next update will include: <br>
-frn and parent frn so not having to rebuild it in python <br>
-filesize fix for files that have their size in extension record. Currently downloads report size 0 because of this as noted in issues. <br>
-
-listed on pypi https://pypi.org/project/mftparser/1.7.1/ <br>
+listed on pypi https://pypi.org/project/mftparser/1.8.1/ <br>
 CLI version can be found at https://github.com/dreadwrr/mft_parsec <br>
 
 A Python extension for parsing the MFT on Windows 10 / Windows 11. Returns a list of tuples for all active entries on the volume. This can be used to find new or modified files efficiently as its not necessary to walk the file system.
