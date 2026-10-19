@@ -1,5 +1,8 @@
 ![alt text](https://raw.githubusercontent.com/dreadwrr/pyparsec/main/wlv.png)
 
+10/19/2026 <br>
+New update! Added DumpMft and CreateCsv to consolidate fully with parsec CLI <br>
+
 listed on pypi https://pypi.org/project/mftparser/1.8.1/ <br>
 CLI version can be found at https://github.com/dreadwrr/mft_parsec <br>
 
