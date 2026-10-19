@@ -25,17 +25,17 @@ pip install mftparser
 
 # Functions
 ## results = mftparser.ScanVolume("C:", only_active=True, microseconds=False) <br><br>
-> returns tuple with 18 fields per entry
+> returns tuple with 20 fields per entry
 
-recno, sequence_num, parent_recno, parent_sequence, in_use, path, name, size, hardlinks, is_dir, is_hardlink, has_ads, file_attribs, mod_time, creation_time, mft_mod, access_time, last_usn = results
+recno, sequence_num, frn, parent_frn, parent_recno, parent_sequence, in_use, path, name, size, hardlinks, is_dir, is_hardlink, has_ads, file_attribs, mod_time, creation_time, mft_mod, access_time, last_usn = results
 
 or
 
 ( <br>
-    recno, sequence_num, parent_recno, parent_sequence, <br>
-    in_use, path, name, size, hardlinks, <br>
-    is_dir, is_hardlink, has_ads, file_attribs, <br>
-    mod_time, creation_time, mft_mod, access_time, last_usn <br>
+    recno, sequence_num, frn, parent_frn, parent_recno, <br>
+    parent_sequence, in_use, path, name, size, hardlinks, <br>
+    is_dir, is_hardlink, has_ads, file_attribs, mod_time, <br>
+    creation_time, mft_mod, access_time, last_usn <br>
 ) = results
 
 ## output_path = mftparser.CreateCsv("C:", output="C:\\\\file.csv") <br><br>
@@ -71,10 +71,8 @@ for entry in results:
 dirs = {}
 fc = []
 for entry in results:
-    recno, sequence_num, parent_recno, parent_sequence, in_use, path, name, size, hardlinks, is_dir, is_hardlink, has_ads, file_attribs, mod_time, creation_time, mft_mod, access_time, last_usn = entry
+    recno, sequence_num, frn, parent_frn, parent_recno, parent_sequence, in_use, path, name, size, hardlinks, is_dir, is_hardlink, has_ads, file_attribs, mod_time, creation_time, mft_mod, access_time, last_usn = entry
     if is_dir:
-        frn = mftparser.entry_to_frn(recno, sequence_num)
-        parent_frn = mftparser.entry_to_frn(parent_recno, parent_sequence)
         dirs[frn] = {
             "parent": parent_frn,
             "name": name,
