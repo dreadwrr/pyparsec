@@ -58,7 +58,7 @@ or
 results = mftparser.ScanVolume()
 print(len(results))
 for entry in results:
-    is_dir = entry[9]
+    is_dir = entry[11]
     if is_dir:
         continue
     ...
